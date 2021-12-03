@@ -3,6 +3,7 @@
 
 src/CMakeFiles/cuckoo_filter.dir/collect.cpp.o: src/collect.cpp
 src/CMakeFiles/cuckoo_filter.dir/collect.cpp.o: include/collect.h
+src/CMakeFiles/cuckoo_filter.dir/collect.cpp.o: include/cuckoo_filter.h
 
 src/CMakeFiles/cuckoo_filter.dir/cuckoo_filter.cpp.o: src/cuckoo_filter.cpp
 src/CMakeFiles/cuckoo_filter.dir/cuckoo_filter.cpp.o: include/cuckoo_filter.h

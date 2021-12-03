@@ -6,8 +6,6 @@
 #include "cuckoo_filter.h"
 #include "collect.h"
 
-int filter_size = 0;
-
 int main(int argc, char* argv[]) {
 
     if (argc < 3) {
@@ -15,7 +13,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    filter_size = std::stoi(argv[1]);
+    index_t filter_size = std::stoi(argv[1]);
 
     std::ifstream test_trace(argv[2]);
     if (!test_trace.is_open()) {
@@ -24,26 +22,31 @@ int main(int argc, char* argv[]) {
     }
     
     Collector collector;
-    std::shared_ptr<char> filter(new char[filter_size]());
+    CuckooFilter cuckoo(filter_size);
 
     std::string op_type;
-    int value;
+    element_t value;
     while (test_trace >> op_type >> value) {
         if (op_type == "i") {
-            int cu_res = cu_insert(filter.get(), value);
+            bool cu_res = cuckoo.cu_insert(value);
             collector.collect_insert(value, cu_res);
             // the filter is full
             if (!cu_res) {
-                std::cout << "Filter needs rehashing, load rate is: " << get_loadrate(filter.get()) << std::endl;
+                std::cout << "Filter needs rehashing, load rate is: " << cuckoo.get_loadrate() << std::endl;
                 exit(1);
             }
-        } else if (op_type == "s") {
-            int cu_res = cu_search(filter.get(), value);
+        } 
+
+        else if (op_type == "s") {
+            bool cu_res = cuckoo.cu_search(value);
             collector.collect_search(value, cu_res);
-        } else if (op_type == "d") {
-            int cu_res = cu_delete(filter.get(), value);
+        } 
+        
+        else if (op_type == "d") {
+            bool cu_res = cuckoo.cu_delete(value);
             collector.collect_delete(value, cu_res);
         }
     }
     
+    std::cout << "fpr: " << collector.get_fpr() << std::endl;
 }

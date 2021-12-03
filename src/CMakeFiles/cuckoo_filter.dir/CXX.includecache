@@ -47,9 +47,13 @@ collect.h
 include/collect.h
 set
 -
+cuckoo_filter.h
+include/cuckoo_filter.h
 
 include/cuckoo_filter.h
 map
+-
+memory
 -
 
 include/xxhash.h

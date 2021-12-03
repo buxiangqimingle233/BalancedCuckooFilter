@@ -48,5 +48,6 @@
         "cuchar": "cpp",
         "cinttypes": "cpp",
         "set": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

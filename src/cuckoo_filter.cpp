@@ -5,24 +5,22 @@
 #include "cuckoo_filter.h"
 #include "xxhash.h"
 
-int cu_search(char filter[], int val) {
-    char footprint = get_footprint(val);
-    int h1 = hash(val);
-    int h2 = hash(val) ^ hash(footprint);
-    if (filter[h1] == footprint) {
-        return h1;
-    } else if (filter[h2] == footprint) {
-        return h2;
+bool CuckooFilter::cu_search(element_t val) {
+    footprint_t footprint = _get_footprint(val);
+    index_t h1 = _hash(val);
+    index_t h2 = _hash(val) ^ _hash(footprint);
+    if (filter[h1] == footprint || filter[h2] == footprint) {
+        return true;
     } else {
-        return -1;
+        return false;
     }
 }
 
 
-int cu_delete(char filter[], int val) {
-    char footprint = get_footprint(val);
-    int h1 = hash(val);
-    int h2 = hash(val) ^ hash(footprint);
+bool CuckooFilter::cu_delete(element_t val) {
+    footprint_t footprint = _get_footprint(val);
+    index_t h1 = _hash(val);
+    index_t h2 = _hash(val) ^ _hash(footprint);
     if (filter[h1] == footprint) {
 #ifdef LOG
         std::cout << "Delete: Factor " << val << " from h1 index " << h1 << std::endl;
@@ -42,10 +40,14 @@ int cu_delete(char filter[], int val) {
 }
 
 
-int cu_insert(char filter[], int val) {
-    char footprint = get_footprint(val);
-    int h1 = hash(val);
-    int h2 = hash(val) ^ hash(footprint);
+bool CuckooFilter::cu_insert(element_t val) {
+    footprint_t footprint = _get_footprint(val);
+    index_t h1 = _hash(val);
+    index_t h2 = _hash(val) ^ _hash(footprint);
+
+    if (cu_search(val)) {
+        return true;
+    }
 
     if (filter[h1] == INF) {
         filter[h1] = footprint;
@@ -59,17 +61,17 @@ int cu_insert(char filter[], int val) {
 #endif
     } else {
         // kickout h2
-        std::map<int, bool> vis;
-        char val_to_insert = footprint;
-        int idx_to_insert = h2;
-        while (filter[idx_to_insert] != INF && !has_visited(vis, idx_to_insert)) {
+        std::map<index_t, bool> vis;
+        footprint_t val_to_insert = footprint;
+        index_t idx_to_insert = h2;
+        while (filter[idx_to_insert] != INF && !_has_visited(vis, idx_to_insert)) {
             vis[idx_to_insert] = true;
-            int idx_evict = idx_to_insert ^ hash(filter[idx_to_insert]);
+            index_t idx_evict = idx_to_insert ^ _hash(filter[idx_to_insert]);
             std::swap(val_to_insert, filter[idx_to_insert]);
             idx_to_insert = idx_evict;
         }
 
-        if (has_visited(vis, idx_to_insert)) {
+        if (_has_visited(vis, idx_to_insert)) {
 #ifdef LOG
             std::cerr << "Insertion: Failed! Factor " << val_to_insert << " has cycled evicting" << std::endl;
 #endif
@@ -81,15 +83,15 @@ int cu_insert(char filter[], int val) {
     return true;
 }
 
-double get_loadrate(char filter[]) {
-    int load_cnt = 0;
-    for (int i = 0; i < filter_size; ++i) {
+double CuckooFilter::get_loadrate() {
+    index_t load_cnt = 0;
+    for (index_t i = 0; i < filter_size; ++i) {
         load_cnt += filter[i] != INF;
     }
     return static_cast<double>(load_cnt) / static_cast<double>(filter_size);
 }
 
-bool has_visited(const std::map<int, bool>& vis, char footprint) {
+bool CuckooFilter::_has_visited(const std::map<index_t, bool>& vis, footprint_t footprint) {
     auto itr = vis.find(footprint);
     if (itr == vis.end()) {
         return false;
@@ -98,11 +100,11 @@ bool has_visited(const std::map<int, bool>& vis, char footprint) {
     }
 }
 
-char get_footprint(int val) {
+footprint_t CuckooFilter::_get_footprint(element_t val) {
     return (val & 0xf) | ((val & 0xff0) >> 4);
 }
 
-int hash(int val) {
-    XXH32_hash_t hash = XXH32(&val, sizeof(int), 1234) % filter_size;
-    return static_cast<int>(hash);
+index_t CuckooFilter::_hash(element_t val) {
+    XXH32_hash_t hash = XXH32(&val, sizeof(element_t), 1234) % filter_size;
+    return static_cast<index_t>(hash);
 }
