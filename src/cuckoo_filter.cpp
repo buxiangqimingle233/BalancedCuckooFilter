@@ -6,10 +6,10 @@
 #include "xxhash.h"
 
 bool CuckooFilter::cu_search(element_t val) {
-    footprint_t footprint = _get_footprint(val);
+    fingerprint_t fingerprint = _get_fingerprint(val);
     index_t h1 = _hash(val);
-    index_t h2 = _hash(val) ^ _hash(footprint);
-    if (filter[h1] == footprint || filter[h2] == footprint) {
+    index_t h2 = _hash(val) ^ _hash(fingerprint);
+    if (filter[h1] == fingerprint || filter[h2] == fingerprint) {
         return true;
     } else {
         return false;
@@ -18,16 +18,16 @@ bool CuckooFilter::cu_search(element_t val) {
 
 
 bool CuckooFilter::cu_delete(element_t val) {
-    footprint_t footprint = _get_footprint(val);
+    fingerprint_t fingerprint = _get_fingerprint(val);
     index_t h1 = _hash(val);
-    index_t h2 = _hash(val) ^ _hash(footprint);
-    if (filter[h1] == footprint) {
+    index_t h2 = _hash(val) ^ _hash(fingerprint);
+    if (filter[h1] == fingerprint) {
 #ifdef LOG
         std::cout << "Delete: Factor " << val << " from h1 index " << h1 << std::endl;
 #endif
         filter[h1] = INF;
         return val;
-    } else if (filter[h2] == footprint) {
+    } else if (filter[h2] == fingerprint) {
 #ifdef LOG
         std::cout << "Delete: Factor " << val << " from h2 index " << h2 << std::endl;
 #endif
@@ -41,28 +41,28 @@ bool CuckooFilter::cu_delete(element_t val) {
 
 
 bool CuckooFilter::cu_insert(element_t val) {
-    footprint_t footprint = _get_footprint(val);
+    fingerprint_t fingerprint = _get_fingerprint(val);
     index_t h1 = _hash(val);
-    index_t h2 = _hash(val) ^ _hash(footprint);
+    index_t h2 = _hash(val) ^ _hash(fingerprint);
 
     if (cu_search(val)) {
         return true;
     }
 
     if (filter[h1] == INF) {
-        filter[h1] = footprint;
+        filter[h1] = fingerprint;
 #ifdef LOG
         std::cout << "Insertion: Factor " << val << " is inserted to " << h1 << std::endl;
 #endif
     } else if (filter[h2] == INF) {
-        filter[h2] = footprint;
+        filter[h2] = fingerprint;
 #ifdef LOG
         std::cout << "Insertion: Factor " << val << " is inserted to " << h2 << std::endl;
 #endif
     } else {
         // kickout h2
         std::map<index_t, bool> vis;
-        footprint_t val_to_insert = footprint;
+        fingerprint_t val_to_insert = fingerprint;
         index_t idx_to_insert = h2;
         while (filter[idx_to_insert] != INF && !_has_visited(vis, idx_to_insert)) {
             vis[idx_to_insert] = true;
@@ -91,8 +91,8 @@ double CuckooFilter::get_loadrate() {
     return static_cast<double>(load_cnt) / static_cast<double>(filter_size);
 }
 
-bool CuckooFilter::_has_visited(const std::map<index_t, bool>& vis, footprint_t footprint) {
-    auto itr = vis.find(footprint);
+bool CuckooFilter::_has_visited(const std::map<index_t, bool>& vis, fingerprint_t fingerprint) {
+    auto itr = vis.find(fingerprint);
     if (itr == vis.end()) {
         return false;
     } else {
@@ -100,7 +100,7 @@ bool CuckooFilter::_has_visited(const std::map<index_t, bool>& vis, footprint_t 
     }
 }
 
-footprint_t CuckooFilter::_get_footprint(element_t val) {
+fingerprint_t CuckooFilter::_get_fingerprint(element_t val) {
     return (val & 0xf) | ((val & 0xff0) >> 4);
 }
 

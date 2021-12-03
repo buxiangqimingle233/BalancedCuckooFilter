@@ -1,3 +1,4 @@
-xxHash/**
+.vscode/*
 CMakeCache.txt
-*.cmake
+CMakeFiles/*
+**/cmake_install.cmake

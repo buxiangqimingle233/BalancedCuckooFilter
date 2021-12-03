@@ -29,15 +29,11 @@ xxhash.h
 /home/wangzhao/code/cuckoo_hash/src/xxhash.h
 
 /home/wangzhao/code/cuckoo_hash/src/main.cpp
-fstream
--
 iostream
 -
-string
+random
 -
-memory
--
-set
+vector
 -
 cuckoo_filter.h
 /home/wangzhao/code/cuckoo_hash/src/cuckoo_filter.h
