@@ -1,8 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
-// #include <map>
-#include <set>
+#include <map>
+// #include <set>
 #include "cuckoo_filter.h"
 #include "xxhash.h"
 #include "city.h"
@@ -59,14 +59,10 @@ bool CuckooFilter::cu_insert(element_t val) {
 #endif
     } else {
         // kickout h2
-        std::set<index_t> vis;
         fingerprint_t val_to_insert = fingerprint;
         index_t idx_to_insert = h2;
-        while (!filter[idx_to_insert].insert(val_to_insert) && 
-                vis.find(idx_to_insert) == vis.end()) {
-
-            vis.insert(idx_to_insert);
-
+        int episode = 0;
+        for (; episode < relocate_limit && !filter[idx_to_insert].insert(val_to_insert); episode++) {
             // Select an evictor and insert the present element
             fingerprint_t evictor = filter[idx_to_insert].evict();
             filter[idx_to_insert].insert(val_to_insert);
@@ -75,13 +71,12 @@ bool CuckooFilter::cu_insert(element_t val) {
             idx_to_insert = idx_to_insert ^ _hash(evictor);
         }
 
-        if (vis.find(idx_to_insert) != vis.end()) {
-            std::cerr << "Insertion: Failed! Factor " << val_to_insert << " has cycled evicting: " << vis.size() << std::endl;
+        if (episode >= relocate_limit) {
 #ifdef LOG
+            std::cerr << "Insertion: Failed! Factor " << val_to_insert << " has cycled evicting: " << vis.size() << std::endl;
 #endif
             return false;
         } 
-        // std::cout << vis.size() << std::endl;
     }
     return true;
 }
@@ -96,14 +91,15 @@ double CuckooFilter::get_loadfactor(unsigned long long inserted_cnt) {
 }
 
 fingerprint_t CuckooFilter::_get_fingerprint(element_t val) {
-    return ((val & 0xf00) >> 8) | ((val & 0xf) << 4) | (val << 8);
+    return val;
+    // return ((val & 0xf00) >> 8) | ((val & 0xf) << 4) | (val << 8);
     // XXH32_hash_t hash = XXH64(&val, sizeof(element_t), 1234);
     // return val & 0xff;
 }
 
 index_t CuckooFilter::_hash(element_t val) {
-    // XXH32_hash_t hash = XXH64(&val, sizeof(element_t), 1234) % filter_size;
-    uint64 hash = CityHash64WithSeed(reinterpret_cast<const char*>(&val), sizeof(element_t), 1234) % filter_size;
+    XXH32_hash_t hash = XXH64(&val, sizeof(element_t), 1234) % filter_size;
+    // uint64 hash = CityHash64WithSeed(reinterpret_cast<const char*>(&val), sizeof(element_t), 1234) % filter_size;
     // std::cout << val << " " << hash << std::endl;
     return static_cast<index_t>(hash);
 }

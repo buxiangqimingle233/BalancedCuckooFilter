@@ -17,5 +17,5 @@ for capacity, worker in workers.items():
     lr, fpr = map(lambda x: float(x), pattern.findall(out.decode('utf-8')))
     df = df.append(dict(zip(df.columns, [capacity, lr, fpr])), ignore_index=True)
 
-df.to_csv("result/cuckoo-8.csv")
+df.to_csv("result/cuckoo-4.csv")
 print(df)

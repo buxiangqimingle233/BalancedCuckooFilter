@@ -21,7 +21,7 @@ algorithm
 -
 memory
 -
-set
+map
 -
 cuckoo_filter.h
 /home/wangzhao/code/cuckoo_hash/src/cuckoo_filter.h
