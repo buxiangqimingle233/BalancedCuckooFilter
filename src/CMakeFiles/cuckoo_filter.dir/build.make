@@ -143,6 +143,7 @@ bin/cuckoo_filter: src/CMakeFiles/cuckoo_filter.dir/collect.cpp.o
 bin/cuckoo_filter: src/CMakeFiles/cuckoo_filter.dir/cuckoo_filter.cpp.o
 bin/cuckoo_filter: src/CMakeFiles/cuckoo_filter.dir/build.make
 bin/cuckoo_filter: lib/libxxhash.a
+bin/cuckoo_filter: libcityhash.a
 bin/cuckoo_filter: src/CMakeFiles/cuckoo_filter.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/wangzhao/code/cuckoo_hash/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable ../bin/cuckoo_filter"
 	cd /home/wangzhao/code/cuckoo_hash/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cuckoo_filter.dir/link.txt --verbose=$(VERBOSE)

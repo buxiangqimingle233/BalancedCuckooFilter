@@ -21,12 +21,14 @@ algorithm
 -
 memory
 -
-map
+set
 -
 cuckoo_filter.h
 /home/wangzhao/code/cuckoo_hash/src/cuckoo_filter.h
 xxhash.h
 /home/wangzhao/code/cuckoo_hash/src/xxhash.h
+city.h
+/home/wangzhao/code/cuckoo_hash/src/city.h
 
 /home/wangzhao/code/cuckoo_hash/src/main.cpp
 iostream
@@ -40,6 +42,14 @@ cuckoo_filter.h
 collect.h
 /home/wangzhao/code/cuckoo_hash/src/collect.h
 
+include/city.h
+stdlib.h
+-
+stdint.h
+-
+utility
+-
+
 include/collect.h
 set
 -
@@ -50,6 +60,8 @@ include/cuckoo_filter.h
 map
 -
 memory
+-
+random
 -
 
 include/xxhash.h

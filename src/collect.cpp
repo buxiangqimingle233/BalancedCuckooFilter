@@ -17,5 +17,6 @@ void Collector::collect_delete(element_t val, bool cu_res) {
 }
 
 double Collector::get_fpr() {
+    // return search_event_counter;
     return static_cast<double>(false_positive_counter) / static_cast<double>(search_event_counter);
 }

@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named cityhash
+
+# Build rule for target.
+cityhash: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cityhash
+.PHONY : cityhash
+
+# fast build rule for target.
+cityhash/fast:
+	$(MAKE) -f CMakeFiles/cityhash.dir/build.make CMakeFiles/cityhash.dir/build
+.PHONY : cityhash/fast
+
+#=============================================================================
 # Target rules for targets named cuckoo_filter
 
 # Build rule for target.
@@ -123,6 +136,33 @@ cuckoo_filter/fast:
 	$(MAKE) -f src/CMakeFiles/cuckoo_filter.dir/build.make src/CMakeFiles/cuckoo_filter.dir/build
 .PHONY : cuckoo_filter/fast
 
+cityhash/src/city.o: cityhash/src/city.cc.o
+
+.PHONY : cityhash/src/city.o
+
+# target to build an object file
+cityhash/src/city.cc.o:
+	$(MAKE) -f CMakeFiles/cityhash.dir/build.make CMakeFiles/cityhash.dir/cityhash/src/city.cc.o
+.PHONY : cityhash/src/city.cc.o
+
+cityhash/src/city.i: cityhash/src/city.cc.i
+
+.PHONY : cityhash/src/city.i
+
+# target to preprocess a source file
+cityhash/src/city.cc.i:
+	$(MAKE) -f CMakeFiles/cityhash.dir/build.make CMakeFiles/cityhash.dir/cityhash/src/city.cc.i
+.PHONY : cityhash/src/city.cc.i
+
+cityhash/src/city.s: cityhash/src/city.cc.s
+
+.PHONY : cityhash/src/city.s
+
+# target to generate assembly for a file
+cityhash/src/city.cc.s:
+	$(MAKE) -f CMakeFiles/cityhash.dir/build.make CMakeFiles/cityhash.dir/cityhash/src/city.cc.s
+.PHONY : cityhash/src/city.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -130,8 +170,12 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... cityhash"
 	@echo "... edit_cache"
 	@echo "... cuckoo_filter"
+	@echo "... cityhash/src/city.o"
+	@echo "... cityhash/src/city.i"
+	@echo "... cityhash/src/city.s"
 .PHONY : help
 
 

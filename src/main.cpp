@@ -12,19 +12,14 @@ int main(int argc, char* argv[]) {
     }
 
     index_t filter_size = std::stoi(argv[1]);
-
-    // std::ifstream test_trace(argv[2]);
-    // if (!test_trace.is_open()) {
-    //     std::cerr << "Cannot find tracefile: " << argv[2] << std::endl;
-    //     return 1;
-    // }
     
     Collector collector;
     CuckooFilter cuckoo(filter_size);
 
-    std::mt19937 val_gen;
+    std::mt19937_64 val_gen;
     std::vector<element_t> inserted_values;
 
+    unsigned long long inserted_cnt = 0;
     // Testing load rates
     while (true) {
         element_t value = val_gen();
@@ -32,14 +27,15 @@ int main(int argc, char* argv[]) {
         bool cu_res = cuckoo.cu_insert(value);
         collector.collect_insert(value, cu_res);
         if (!cu_res) {
-            std::cout << cuckoo.get_loadrate() << std::endl;
+            std::cout << cuckoo.get_loadfactor(inserted_cnt) << std::endl;
             break;
         }
+        inserted_cnt++;
     }
 
     size_t len = inserted_values.size();
-    inserted_values.clear();
-    for (auto _ = 0; _ < 10 * len; ++_) {
+    // inserted_values.clear();
+    for (auto _ = 0; _ < len; ++_) {
         inserted_values.push_back(val_gen());
     }
 
@@ -58,7 +54,7 @@ int main(int argc, char* argv[]) {
     //         collector.collect_insert(value, cu_res);
     //         // the filter is full
     //         if (!cu_res) {
-    //             std::cout << "Filter needs rehashing, load rate is: " << cuckoo.get_loadrate() << std::endl;
+    //             std::cout << "Filter needs rehashing, load rate is: " << cuckoo.get_loadfactor() << std::endl;
     //             exit(1);
     //         }
     //     } 
