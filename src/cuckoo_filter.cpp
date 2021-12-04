@@ -82,11 +82,6 @@ bool CuckooFilter::cu_insert(element_t val) {
 }
 
 double CuckooFilter::get_loadfactor(unsigned long long inserted_cnt) {
-    // index_t load_cnt = 0;
-    // for (index_t i = 0; i < filter_size; ++i) {
-    //     load_cnt += !filter[i].empty();
-    // }
-    // return static_cast<double>(load_cnt) / static_cast<double>(filter_size);
     return static_cast<double>(inserted_cnt) / static_cast<double>(filter_size * bucket_size);
 }
 

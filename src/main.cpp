@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <random>
 #include <vector>
 #include "cuckoo_filter.h"
@@ -20,6 +21,7 @@ int main(int argc, char* argv[]) {
     std::vector<element_t> inserted_values;
 
     unsigned long long inserted_cnt = 0;
+    std::cout << std::fixed << std::setprecision(8);
     // Testing load rates
     while (true) {
         element_t value = val_gen();

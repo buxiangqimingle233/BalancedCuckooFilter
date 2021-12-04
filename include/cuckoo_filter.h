@@ -12,7 +12,7 @@ typedef unsigned long element_t;
 const fingerprint_t INF = -1;
 
 // FIXME: just enable contineous addresses
-const int bucket_size = 4;
+const int bucket_size = 2;
 const int relocate_limit = 250;
 
 // #define LOG
@@ -21,7 +21,7 @@ class Bucket {
 private:
     fingerprint_t data_[bucket_size];
     bool valid_[bucket_size];
-    int leftmost_available;
+    int evicted_idx;
 
 public:
     Bucket() {
@@ -29,7 +29,7 @@ public:
             data_[i] = INF;
             valid_[i] = false;
         }
-        leftmost_available = 0;
+        evicted_idx = 0;
     }
     
     bool find(fingerprint_t val) {
@@ -63,8 +63,10 @@ public:
     }
 
     fingerprint_t evict() {
+        evicted_idx = (evicted_idx + 1) % bucket_size;
+        return delete_(data_[evicted_idx]);
         // return delete_(data_[0]);
-        return delete_(data_[rand() % bucket_size]);
+        // return delete_(data_[rand() % bucket_size]);
     }
 
     bool empty() {
@@ -94,7 +96,6 @@ public:
 
     CuckooFilter(index_t filter_size_) {
         filter_size = filter_size_;
-        // filter = std::make_shared<fingerprint_t>(new fingerprint_t[filter_size]());
         filter = new Bucket[filter_size + 1]();
     }
     ~CuckooFilter() {
