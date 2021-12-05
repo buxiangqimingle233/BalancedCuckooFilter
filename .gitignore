@@ -3,4 +3,10 @@ CMakeCache.txt
 CMakeFiles/*
 build/*
 **.cmake
+**.Makefile
+*.a
+result/*
+figure/*
+bin/*
+run.sh
 # **.ipynb
