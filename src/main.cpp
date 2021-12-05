@@ -3,7 +3,7 @@
 #include <random>
 #include <vector>
 #include "cuckoo_filter.hpp"
-#include "collect.h"
+#include "collect.hpp"
 
 template<int bucket_size, int relocate_limit>
 void test(index_t capacity) {
@@ -35,8 +35,11 @@ void test(index_t capacity) {
         collector.collect_search(value, cu_res);
     }
 
-    fprintf(stdout, "%lld %d %.8f %.8f\n", 
-            capacity, bucket_size, cuckoo.get_loadfactor(inserted_cnt), collector.get_fpr());
+    fprintf(stdout, "%lld %d %.8f %.8f %8f\n", 
+            capacity, bucket_size, 
+            cuckoo.get_loadfactor(inserted_cnt), 
+            collector.get_fpr(),
+            CntAnalyzer::get_analyzer()->get_average());
     
     return;
 }
@@ -51,8 +54,10 @@ int main(int argc, char* argv[]) {
 
     index_t filter_size = std::stoi(argv[1]);
 
-    test< 2 , 250 > (filter_size);
-    test< 4 , 250 > (filter_size);
+    test< 2, 250 > (filter_size);
+    test< 4, 250 > (filter_size);
+    test< 8, 250 > (filter_size);
+
 
     return 0;
 }

@@ -10,6 +10,7 @@
 #include "city.h"
 #include "xxhash.h"
 #include "bucket.hpp"
+#include "collect.hpp"
 
 template<int bucket_size, int relocate_limit>
 // #define INF 0
@@ -80,6 +81,8 @@ public:
                 val_to_insert = evictor;
                 idx_to_insert = idx_to_insert ^ _hash(evictor);
             }
+
+            CntAnalyzer::get_analyzer()->add_sample(episode);
 
             if (episode >= relocate_limit) {
 #ifdef LOG

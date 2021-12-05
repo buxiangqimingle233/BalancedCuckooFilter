@@ -2,10 +2,11 @@ cmake_minimum_required (VERSION 2.8)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")
+
+add_compile_options(-O3 -D${EVICT_STYLE})
+
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 project (cuckoo)
-
 
 # cityhash
 add_library(cityhash STATIC cityhash/src/city.cc)

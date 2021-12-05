@@ -1,1 +1,0 @@
-/usr/bin/clang++-6.0  -O3  -g  -rdynamic CMakeFiles/cuckoo_filter.dir/main.cpp.o  -o ../bin/cuckoo_filter ../lib/libxxhash.a ../libcityhash.a 

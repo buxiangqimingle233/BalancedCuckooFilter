@@ -4,7 +4,7 @@
 
 #include <set>
 #include "utils.h"
-
+#include <memory>
 
 class Collector {
 
@@ -37,5 +37,39 @@ public:
         ground_truth = std::set<element_t>();
     }
 };
+
+//To make the compiler happy ... 
+class CntAnalyzer;
+static std::shared_ptr<CntAnalyzer> ptr(nullptr);
+
+class CntAnalyzer {
+
+private:
+    int cnt;
+    int sum;
+    
+public:
+    static std::shared_ptr<CntAnalyzer> get_analyzer() {
+        if (ptr != nullptr) {
+            return ptr;
+        } else {
+            ptr = std::make_shared<CntAnalyzer>();
+            return ptr;
+        }
+    }
+
+    void add_sample(int sample) {
+        sum += sample;
+        cnt++;
+    }
+
+    double get_average() {
+        return static_cast<double>(sum) / static_cast<double>(cnt);
+    }
+
+    CntAnalyzer(): cnt(0),sum(0) { }
+};
+
+
 
 #endif

@@ -1,3 +1,4 @@
+#include <cassert>
 #include "utils.h"
 
 template<int bucket_size>
@@ -5,7 +6,10 @@ class Bucket {
 private:
     fingerprint_t data_[bucket_size];
     bool valid_[bucket_size];
-    int evicted_idx;
+    char evicted_idx;
+#ifdef AWARE
+    char last_evicted = 0;
+#endif
 
 public:
     Bucket() {
@@ -47,15 +51,28 @@ public:
     }
 
     fingerprint_t evict() {
+        assert(full());
+#ifdef RR
         evicted_idx = (evicted_idx + 1) % bucket_size;
+#elif FIRST
+        evicted_idx = 0;
+#elif RANDOM
+        evicted_idx = rand() % bucket_size;
+#elif AWARE
+        evicted_idx = rand() % bucket_size;
+        if (evicted_idx == last_evicted) {
+            evicted_idx = (evicted_idx + 1) % bucket_size;
+        }
+        last_evicted = evicted_idx;
+#else
+        evicted_idx = 0;
+#endif
         return delete_(data_[evicted_idx]);
-        // return delete_(data_[0]);
-        // return delete_(data_[rand() % bucket_size]);
     }
 
-    bool empty() {
+    bool full() {
         for (int i = 0; i < bucket_size; ++i) {
-            if (valid_[i]) {
+            if (!valid_[i]) {
                 return false;
             }
         }
