@@ -12,9 +12,8 @@
     cmake . -D{eviction_policies} && make clean && make all
 ```
 
-Replace the {eviction_policies} with 
+Replace the {eviction_policies} with the following built-in policies:
 
-Built-in eviction policies include:
 * RR: For each bucket, victim entries are selected in round-roubin.
 * RANDOM: Randomly selecting the entry from the bucket to replace.
 * AWARE: Similar with RANDOM, but pass the index of the most recent evicted entry. 
@@ -30,4 +29,4 @@ This python script builds and tests cuckoo filters configured with four aforemen
 
 ## Plot figures
 
-We build a Jupyter Notebook script *plot.ipynb* to parse the result file and plots visualize fpr, load factors, overheads and average relocation steps.  
+We build a Jupyter Notebook script *plot.ipynb* to parse the result file and visualize fpr, load factors, overheads and average relocation steps.  
